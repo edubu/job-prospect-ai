@@ -1,14 +1,12 @@
 import Layout from "@/components/layout";
-import Navbar from "@/components/navbar";
+import React from "react";
 
-export const siteTitle = "Next.js Sample Website";
-
-export default function Home() {
-  const isSignedIn = false;
-
+const Index: React.FC = () => {
   return (
-    <Layout>
-      <Navbar isSignedIn={isSignedIn} />
-    </Layout>
+    <div className="flex items-center justify-center min-h-screen">
+      <h1 className="text-4xl font-bold">Hello World</h1>
+    </div>
   );
-}
+};
+
+export default Index;
