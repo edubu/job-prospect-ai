@@ -1,10 +1,15 @@
+"use client";
+
 import "../styles/globals.css"; // Import global styles
 import type { AppProps } from "next/app";
 import Layout from "@/components/layout"; // Import the Layout component
 
-function MyApp({ Component, pageProps }: AppProps) {
+import dotenv from "dotenv";
+dotenv.config();
+
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <Layout title="My Next App">
+    <Layout>
       <Component {...pageProps} />
     </Layout>
   );

@@ -14,9 +14,12 @@ const config: Config = {
         bold: "700",
         italic: "italic",
       },
+      borderWidth: {
+        "0.5": "0.5px",
+      },
     },
     colors: {
-      text: "#000000",
+      black: "#000000",
       subHeader: "#707070",
       mainBackground: "#F7F7F8",
       subBackground: "#E4E8ED",
@@ -25,6 +28,7 @@ const config: Config = {
       newDocBtnText: "#FFFFFF",
       newDocBtn: "#2396ED",
       billingActive: "#21A366",
+      red: "#FF0000",
     },
   },
   plugins: [],
