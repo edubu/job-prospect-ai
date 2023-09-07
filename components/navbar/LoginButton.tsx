@@ -1,27 +1,31 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import supabase from "@/lib/utils/supabaseClient";
 
 const LoginButton = () => {
-  const [session, setSession] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    // Get the current user
+    const user = supabase.auth.getUser();
+    setUser(user);
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    // Listen to auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        const currentUser = session ? session.user : null;
+        setUser(currentUser);
+      }
+    );
 
-    console.log(session);
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   return (
     <>
-      {!session ? (
+      {!user ? (
         <Link href="/login">
           <button className="h-10 rounded-lg bg-activeBtn font-bold px-5">
             Sign In
@@ -36,39 +40,39 @@ const LoginButton = () => {
       )}
     </>
   );
-
-  // return (
-  //   <div>
-  //     {!session ? (
-  //       <Button
-  //         className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-  //         colorScheme="teal"
-  //         onClick={() => signIn("google")}
-  //       >
-  //         Sign in
-  //       </Button>
-  //     ) : (
-  //       <>
-  //         {/* <p>Welcome, {session.user?.name}!</p>
-  //         <Button
-  //           className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-  //           colorScheme="teal"
-  //           onClick={() => signOut()}
-  //         >
-  //           Sign out
-  //         </Button> */}
-  //         <Link href="/dashboard">
-  //           <Button
-  //             className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-  //             colorScheme="teal"
-  //           >
-  //             Dashboard
-  //           </Button>
-  //         </Link>
-  //       </>
-  //     )}
-  //   </div>
-  // );
 };
 
 export default LoginButton;
+
+// return (
+//   <div>
+//     {!session ? (
+//       <Button
+//         className="h-10 rounded-lg bg-activeBtn font-bold px-5"
+//         colorScheme="teal"
+//         onClick={() => signIn("google")}
+//       >
+//         Sign in
+//       </Button>
+//     ) : (
+//       <>
+//         {/* <p>Welcome, {session.user?.name}!</p>
+//         <Button
+//           className="h-10 rounded-lg bg-activeBtn font-bold px-5"
+//           colorScheme="teal"
+//           onClick={() => signOut()}
+//         >
+//           Sign out
+//         </Button> */}
+//         <Link href="/dashboard">
+//           <Button
+//             className="h-10 rounded-lg bg-activeBtn font-bold px-5"
+//             colorScheme="teal"
+//           >
+//             Dashboard
+//           </Button>
+//         </Link>
+//       </>
+//     )}
+//   </div>
+// );
