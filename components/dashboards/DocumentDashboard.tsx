@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import supabase from "@/lib/utils/supabaseClient";
 
+// Icons
 import { AiOutlinePlus } from "react-icons/ai";
+
+import { formatTimestamp } from "@/lib/utils/date";
 
 const DocumentDashboard: React.FC = () => {
   // Sample data; replace with your actual data fetched from a database or API
-  const documents = [
-    { name: "Document 1", type: "Resume", createdAt: "2021-01-01 12:30:45" },
-    {
-      name: "Document 2",
-      type: "Cover Letter",
-      createdAt: "2021-02-15 14:22:10",
-    },
-    { name: "Document 3", type: "Proposal", createdAt: "2021-07-21 09:45:00" },
-    // ... more documents
-  ];
+  // const documents = [
+  //   { name: "Document 1", type: "Resume", createdAt: "2021-01-01 12:30:45" },
+  //   {
+  //     name: "Document 2",
+  //     type: "Cover Letter",
+  //     createdAt: "2021-02-15 14:22:10",
+  //   },
+  //   { name: "Document 3", type: "Proposal", createdAt: "2021-07-21 09:45:00" },
+  //   // ... more documents
+  // ];
+
+  const [documents, setDocuments] = useState([]);
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      const documents = await supabase.from("documents").select("*");
+
+      setDocuments(documents.data);
+    };
+
+    fetchDocuments();
+  }, []);
 
   return (
     <div className="flex flex-col mx-4 h-full">
@@ -48,11 +64,11 @@ const DocumentDashboard: React.FC = () => {
           </div>
 
           {documents.map((doc, index) => (
-            <Link href={`/dashboard/documents/${doc.name}`} key={index}>
+            <Link href={`/dashboard/documents/${doc.id}`} key={index}>
               <div className="grid grid-cols-3 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
                 <p>{doc.name}</p>
                 <p>{doc.type}</p>
-                <p>{doc.createdAt}</p>
+                <p>{formatTimestamp(doc.created_at)}</p>
               </div>
             </Link>
           ))}

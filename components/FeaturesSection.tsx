@@ -29,6 +29,8 @@ const FeaturesSection = () => {
           header="Decipher job qualifications"
           subHeader="From tech jargon to role-specific nuances, get a clear breakdown of every preferred qualification. Understand not just the 'what', but the 'why' and 'how' it matters to your dream job."
         />
+
+        {/* TODO: change header */}
         <FeatureCard
           imageSrc="/images/jobQuals.png"
           header="Dive into data-driven details"

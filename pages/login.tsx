@@ -12,17 +12,27 @@ const LoginPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const user = supabase.auth.getUser();
-    if (user) {
-      router.push("/dashboard");
-    }
+    const checkIfSessionExists = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.log("Error finding session", error);
+      }
+      const session = data.session;
+
+      if (session) {
+        router.push("/dashboard");
+      }
+    };
+
+    checkIfSessionExists();
   }, []);
 
   return (
     <div className="flex justify-center items-center h-screen">
       <Auth
         supabaseClient={supabase}
-        providers={["google", "github"]}
+        providers={["google"]}
         appearance={{ theme: ThemeSupa }}
       />
     </div>
