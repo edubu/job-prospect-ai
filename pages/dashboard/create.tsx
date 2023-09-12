@@ -2,7 +2,7 @@ import React from "react";
 
 import Navbar from "@/components/navbar";
 import SideNavbar from "@/components/sideNavbar";
-import CreateDashboard from "@/components/dashboards/CreateDashboard";
+import CreateDashboard from "@/components/dashboards/createDashboard";
 
 const Create: React.FC = () => {
   return (

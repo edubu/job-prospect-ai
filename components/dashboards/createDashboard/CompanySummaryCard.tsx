@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
+import supabase from "@/lib/utils/supabaseClient";
+import { createCompanySummary } from "@/lib/documents/summaries";
 
 const CompanySummarizerDescription = [
   "Scrapes company website pages from URL",
@@ -10,6 +12,29 @@ const CompanySummarizerDescription = [
 const CompanySummaryCard: React.FC = () => {
   const [companyURL, setCompanyURL] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [userId, setUserId] = useState("1");
+
+  // Fetch user to retrieve Id
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("There was an error fetching the user: ", error);
+      }
+
+      const session = data.session;
+      if (!session) {
+        console.error(
+          "User does not have a session -- please log in. How did they get here?"
+        );
+      }
+
+      const id = session.user.id;
+      setUserId(id);
+    };
+
+    fetchUserId();
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,13 +52,16 @@ const CompanySummaryCard: React.FC = () => {
           setIsValid(true);
           console.log("Creating company summary with URL: ", companyURL);
           // submission logic here
-          fetch("/api/getUserDocuments", {
-            method: "GET",
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log(data);
-            });
+          const url = new URL(companyURL);
+          console.log(
+            `URL: ${url}, host: ${url.host}, path: ${url.pathname}, hostname: ${url.hostname}, origin: ${url.origin}`
+          );
+          createCompanySummary({
+            companyURL: new URL(companyURL),
+            userId,
+          }).then((response) => {
+            console.log("Response from createCompanySummary: ", response);
+          });
         } else {
           setIsValid(false);
           console.log("The URL is invalid.");

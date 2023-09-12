@@ -8,23 +8,14 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { formatTimestamp } from "@/lib/utils/date";
 
 const DocumentDashboard: React.FC = () => {
-  // Sample data; replace with your actual data fetched from a database or API
-  // const documents = [
-  //   { name: "Document 1", type: "Resume", createdAt: "2021-01-01 12:30:45" },
-  //   {
-  //     name: "Document 2",
-  //     type: "Cover Letter",
-  //     createdAt: "2021-02-15 14:22:10",
-  //   },
-  //   { name: "Document 3", type: "Proposal", createdAt: "2021-07-21 09:45:00" },
-  //   // ... more documents
-  // ];
-
   const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     const fetchDocuments = async () => {
-      const documents = await supabase.from("documents").select("*");
+      const documents = await supabase
+        .from("documents")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       setDocuments(documents.data);
     };
