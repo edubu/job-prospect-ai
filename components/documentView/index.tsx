@@ -1,15 +1,20 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import supabase from "@/lib/utils/supabaseClient";
+import { useRouter, useSearchParams } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+//import supabase from "@/lib/utils/supabaseClient";
 
 import ReactMarkdown from "react-markdown";
 import styles from "./markdown.module.css";
 
-const DocumentView: React.FC = () => {
-  const router = useRouter();
-  const documentId = router.query.id;
+interface DocumentViewProps {
+  documentId: string | null;
+}
 
-  const [markdownContent, setMarkdownContent] = useState("# Example Markdown");
+const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
+  const supabase = createClientComponentClient();
+  const [markdownContent, setMarkdownContent] = useState("");
 
   useEffect(() => {
     if (!documentId) return;
@@ -54,6 +59,10 @@ const DocumentView: React.FC = () => {
 
     fetchDocument();
   }, [documentId]);
+
+  if (markdownContent === "") {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <div className={`${styles["markdown-container"]} bg-subBackground`}>

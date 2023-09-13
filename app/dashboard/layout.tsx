@@ -1,20 +1,20 @@
 import React from "react";
-
 import Navbar from "@/components/navbar";
 import SideNavbar from "@/components/sideNavbar";
-import CreateDashboard from "@/components/dashboards/createDashboard";
 
-const Create: React.FC = () => {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <Navbar isDashboard={true} />
 
       <div className="container flex m-4">
         <SideNavbar />
-        <CreateDashboard />
+        {children}
       </div>
     </>
   );
-};
-
-export default Create;
+}

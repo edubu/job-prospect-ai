@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useEffect } from "react";
-import supabase from "@/lib/utils/supabaseClient";
+//import supabase from "@/lib/utils/supabaseClient";
 
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
+
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     const checkIfSessionExists = async () => {
@@ -34,6 +36,7 @@ const LoginPage: React.FC = () => {
         supabaseClient={supabase}
         providers={["google"]}
         appearance={{ theme: ThemeSupa }}
+        redirectTo={"http://localhost:3000/auth/callback"}
       />
     </div>
   );

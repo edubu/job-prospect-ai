@@ -1,15 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import supabase from "@/lib/utils/supabaseClient";
+//import supabase from "@/lib/utils/supabaseClient";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import {
+  Session,
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs";
 
 const AccountButton: React.FC = () => {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<Session | null>();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
+
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -59,12 +65,11 @@ const AccountButton: React.FC = () => {
       )}
       {dropdownOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-subBackground opacity-100 border border-gray-200 rounded shadow-lg">
-          <button
-            className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <form action="/auth/sign-out" method="post">
+            <button className="block w-full px-4 py-2 text-left hover:bg-gray-100">
+              Logout
+            </button>
+          </form>
         </div>
       )}
     </div>

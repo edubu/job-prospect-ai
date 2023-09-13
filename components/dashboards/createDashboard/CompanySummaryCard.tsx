@@ -1,7 +1,10 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import supabase from "@/lib/utils/supabaseClient";
+//import supabase from "@/lib/utils/supabaseClient";
 import { createCompanySummary } from "@/lib/documents/summaries";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const CompanySummarizerDescription = [
   "Scrapes company website pages from URL",
@@ -13,6 +16,8 @@ const CompanySummaryCard: React.FC = () => {
   const [companyURL, setCompanyURL] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [userId, setUserId] = useState("1");
+
+  const supabase = createClientComponentClient();
 
   // Fetch user to retrieve Id
   useEffect(() => {

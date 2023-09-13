@@ -1,27 +1,23 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import supabase from "@/lib/utils/supabaseClient";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { User } from "@supabase/auth-helpers-nextjs";
 
 const LoginButton = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  // Create a Supabase client configured to use cookies
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     // Get the current user
-    const user = supabase.auth.getUser();
-    setUser(user);
-
-    // Listen to auth state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        const currentUser = session ? session.user : null;
-        setUser(currentUser);
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+    supabase.auth.getUser().then((response) => {
+      //console.log(response);
+      setUser(response.data.user);
+    });
+  }, [supabase]);
 
   return (
     <>
@@ -43,36 +39,3 @@ const LoginButton = () => {
 };
 
 export default LoginButton;
-
-// return (
-//   <div>
-//     {!session ? (
-//       <Button
-//         className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-//         colorScheme="teal"
-//         onClick={() => signIn("google")}
-//       >
-//         Sign in
-//       </Button>
-//     ) : (
-//       <>
-//         {/* <p>Welcome, {session.user?.name}!</p>
-//         <Button
-//           className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-//           colorScheme="teal"
-//           onClick={() => signOut()}
-//         >
-//           Sign out
-//         </Button> */}
-//         <Link href="/dashboard">
-//           <Button
-//             className="h-10 rounded-lg bg-activeBtn font-bold px-5"
-//             colorScheme="teal"
-//           >
-//             Dashboard
-//           </Button>
-//         </Link>
-//       </>
-//     )}
-//   </div>
-// );

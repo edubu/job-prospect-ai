@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavbarButtonProps {
   text: string;
@@ -12,11 +12,12 @@ interface NavbarButtonProps {
 
 const NavbarButton: React.FC<NavbarButtonProps> = ({ text, path, logo }) => {
   const router = useRouter();
-  const [currentPath, setCurrentPath] = useState(router.pathname);
+  const pathname = usePathname();
+  const [currentPath, setCurrentPath] = useState(pathname);
 
   useEffect(() => {
-    setCurrentPath(router.pathname);
-  }, [router.pathname]);
+    setCurrentPath(pathname);
+  }, [pathname]);
 
   return (
     <div

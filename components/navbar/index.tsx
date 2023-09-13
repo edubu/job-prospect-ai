@@ -12,7 +12,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
   return (
     <>
       <div
-        className={`container flex justify-between mx-auto px-4 py-3 h-full ${
+        className={`container flex justify-between mx-auto px-4 py-3 ${
           isDashboard ? "border-b-0.5 border-subHeader" : ""
         }`}
       >

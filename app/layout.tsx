@@ -15,15 +15,17 @@ export const metadata = {
 
 const Layout: React.FC = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen">
+    <html lang="en">
       <Head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
         <link rel="icon" href="/images/logo.png" />
       </Head>
 
-      <main className="">{children}</main>
-    </div>
+      <body className="min-h-screen">
+        <main className="">{children}</main>
+      </body>
+    </html>
   );
 };
 

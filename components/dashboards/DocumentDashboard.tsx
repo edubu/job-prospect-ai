@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import supabase from "@/lib/utils/supabaseClient";
+import { cookies } from "next/headers";
+//import supabase from "@/lib/utils/supabaseClient";
 
 // Icons
 import { AiOutlinePlus } from "react-icons/ai";
 
 import { formatTimestamp } from "@/lib/utils/date";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
-const DocumentDashboard: React.FC = () => {
-  const [documents, setDocuments] = useState([]);
+export default async function DocumentDashboard() {
+  const supabase = createServerComponentClient({ cookies });
 
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      const documents = await supabase
-        .from("documents")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      setDocuments(documents.data);
-    };
-
-    fetchDocuments();
-  }, []);
+  const response = await supabase
+    .from("documents")
+    .select("*")
+    .order("created_at", { ascending: false });
+  const documents = response.data;
 
   return (
     <div className="flex flex-col mx-4 h-full">
@@ -54,8 +49,14 @@ const DocumentDashboard: React.FC = () => {
             <p className="text-lg font-semibold">Created At</p>
           </div>
 
-          {documents.map((doc, index) => (
-            <Link href={`/dashboard/documents/${doc.id}`} key={index}>
+          {documents?.map((doc, index) => (
+            <Link
+              href={{
+                pathname: `/dashboard/documents`,
+                query: { documentId: doc.id },
+              }}
+              key={index}
+            >
               <div className="grid grid-cols-3 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
                 <p>{doc.name}</p>
                 <p>{doc.type}</p>
@@ -67,6 +68,4 @@ const DocumentDashboard: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default DocumentDashboard;
+}
