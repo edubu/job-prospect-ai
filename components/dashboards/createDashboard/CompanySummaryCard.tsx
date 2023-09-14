@@ -60,7 +60,9 @@ const CompanySummaryCard: React.FC = () => {
       const generateData = await generateResponse.json();
 
       // redirect to document view
-      router.push(generateData.redirectTo);
+      if (generateData.redirectTo) {
+        router.push(generateData.redirectTo);
+      }
 
       // console.log(generateData);
     } catch (error) {
