@@ -6,6 +6,8 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { createCompanySummary } from "@/lib/documents/summaries";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
+import { useRouter } from "next/navigation";
+
 const CompanySummarizerDescription = [
   "Scrapes company website pages from URL",
   "Generates in-depth summary document",
@@ -15,66 +17,55 @@ const CompanySummarizerDescription = [
 const CompanySummaryCard: React.FC = () => {
   const [companyURL, setCompanyURL] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const [userId, setUserId] = useState("1");
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const supabase = createClientComponentClient();
+  const router = useRouter();
 
-  // Fetch user to retrieve Id
-  useEffect(() => {
-    const fetchUserId = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("There was an error fetching the user: ", error);
-      }
-
-      const session = data.session;
-      if (!session) {
-        console.error(
-          "User does not have a session -- please log in. How did they get here?"
-        );
-      }
-
-      const id = session.user.id;
-      setUserId(id);
-    };
-
-    fetchUserId();
-  });
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("/api/validateURL", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ urls: [companyURL] }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data[0].isValid) {
-          setIsValid(true);
-          console.log("Creating company summary with URL: ", companyURL);
-          // submission logic here
-          const url = new URL(companyURL);
-          console.log(
-            `URL: ${url}, host: ${url.host}, path: ${url.pathname}, hostname: ${url.hostname}, origin: ${url.origin}`
-          );
-          createCompanySummary({
-            companyURL: new URL(companyURL),
-            userId,
-          }).then((response) => {
-            console.log("Response from createCompanySummary: ", response);
-          });
-        } else {
-          setIsValid(false);
-          console.log("The URL is invalid.");
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error validating the URL:", error);
+    try {
+      const validateResponse = await fetch("/api/validateURL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ urls: [companyURL] }),
       });
+
+      const validateData = (await validateResponse.json()).data;
+      console.log(validateData);
+
+      if (validateData[0].isValid) {
+        setIsValid(true);
+      } else {
+        setIsValid(false);
+        return;
+      }
+    } catch (error) {
+      console.log("There was an error validating the URL:", error);
+    }
+
+    setIsGenerating(true);
+    // generate company summary
+    try {
+      const generateResponse = await fetch("/api/generateCompanySummary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: companyURL }),
+      });
+
+      const generateData = await generateResponse.json();
+
+      // redirect to document view
+      router.push(generateData.redirectTo);
+
+      // console.log(generateData);
+    } catch (error) {
+      console.log("There was an error generating the company summary:", error);
+    }
   };
 
   return (
@@ -89,7 +80,7 @@ const CompanySummaryCard: React.FC = () => {
       </ul>
 
       {/* Company Summarizer Input Form */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} method="post">
         <div className="mb-4">
           <label
             htmlFor="companyURL"
@@ -119,6 +110,9 @@ const CompanySummaryCard: React.FC = () => {
           </div>
         </button>
       </form>
+
+      {/* Company Summarizer Loading */}
+      {isGenerating && <div className="mt-3 pt-3">Generating document... </div>}
     </div>
   );
 };

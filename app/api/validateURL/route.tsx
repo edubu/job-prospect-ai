@@ -1,6 +1,6 @@
 // pages/api/validateURLs.ts
-import type { NextApiRequest, NextApiResponse } from "next";
 import fetch from "node-fetch";
+import { NextResponse } from "next/server";
 
 // Check if URL is syntactically correct
 function isValidURL(url: string): boolean {
@@ -40,26 +40,25 @@ async function isWebPageURL(url: string): Promise<boolean> {
   }
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    const { urls }: { urls: string[] } = req.body;
+export async function POST(req: Request) {
+  const data = await req.json();
+  console.log(data);
+  const { urls }: { urls: string[] } = data;
+  console.log(urls);
 
-    if (!urls || !Array.isArray(urls)) {
-      return res.status(400).json({ error: "URLs should be an array" });
-    }
-
-    const validationResults = await Promise.all(
-      urls.map(async (url) => {
-        const isValid = await isWebPageURL(url);
-        return {
-          url,
-          isValid,
-        };
-      })
-    );
-
-    return res.status(200).json(validationResults);
-  } else {
-    res.status(405).end(); // Method Not Allowed
+  if (!urls || !Array.isArray(urls)) {
+    return NextResponse.json({ data: null, error: "URLs should be an array" });
   }
-};
+
+  const validationResults = await Promise.all(
+    urls.map(async (url) => {
+      const isValid = await isWebPageURL(url);
+      return {
+        url,
+        isValid,
+      };
+    })
+  );
+
+  return NextResponse.json({ data: validationResults, error: null });
+}
