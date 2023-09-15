@@ -1,13 +1,21 @@
-import supabase from "../utils/supabaseClient";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export interface IDocumentEntry {
-  user_id: string;
+  user_id: string | undefined;
   type: string;
   document_path: string;
   name: string;
 }
 
-export const insertDocumentEntry = async (documentEntry: IDocumentEntry) => {
+export interface IInsertDocumentEntryProps {
+  supabase: SupabaseClient;
+  documentEntry: IDocumentEntry;
+}
+
+export const insertDocumentEntry = async ({
+  supabase,
+  documentEntry,
+}: IInsertDocumentEntryProps) => {
   const { error } = await supabase.from("documents").insert(documentEntry);
 
   if (error) {

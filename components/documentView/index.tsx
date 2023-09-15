@@ -20,7 +20,6 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
     if (!documentId) return;
 
     const fetchDocumentInfo = async () => {
-      console.log(documentId);
       const { data, error } = await supabase
         .from("documents")
         .select("*")
@@ -35,15 +34,31 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
       return documentInfo;
     };
 
+    const fetchDocumentVersion = async (documentInfo) => {
+      const { data, error } = await supabase
+        .from("document-versions")
+        .select("*")
+        .eq("name", documentInfo.name)
+        .limit(1);
+
+      if (error) {
+        throw new Error(`Error fetching document version: ${error}`);
+      }
+
+      return data[0].version;
+    };
+
     const fetchDocument = async () => {
       const documentInfo = await fetchDocumentInfo();
-      // Fecth document from supabase bucket
+      const documentVersion = await fetchDocumentVersion(documentInfo);
+      // Fetch document from supabase bucket
       const documentPath = documentInfo.document_path;
 
       // Fetch document from supabase bucket
+      console.log("fetching document version: ", documentVersion);
       const { data, error } = await supabase.storage
         .from("user-documents")
-        .download(documentPath);
+        .download(`${documentPath}?version=${documentVersion}`);
 
       if (error) {
         console.error("Error fetching document:", error);

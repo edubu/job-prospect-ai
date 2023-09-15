@@ -30,11 +30,10 @@ const CompanySummaryCard: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ urls: [companyURL] }),
+        body: JSON.stringify({ url: companyURL }),
       });
 
       const validateData = (await validateResponse.json()).data;
-      console.log(validateData);
 
       if (validateData[0].isValid) {
         setIsValid(true);
@@ -53,6 +52,7 @@ const CompanySummaryCard: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
         body: JSON.stringify({ url: companyURL }),
       });
@@ -67,6 +67,7 @@ const CompanySummaryCard: React.FC = () => {
       // console.log(generateData);
     } catch (error) {
       console.log("There was an error generating the company summary:", error);
+      setIsGenerating(false);
     }
   };
 

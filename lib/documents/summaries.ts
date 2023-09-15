@@ -1,19 +1,144 @@
-import supabase from "../utils/supabaseClient";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { ErrorGeneratorTypes } from "../utils/errorTypes";
 import { insertDocumentEntry } from "./databaseHelpers";
 import { getCompanySummaryAsMarkdown } from "./generator";
 
-interface ICompanySummary {
+interface ICompanySummaryProps {
   companyURL: URL;
-  userId: string;
+  supabase: SupabaseClient;
+  options: Record<string, boolean>;
 }
 
-interface ICompanySummaryResponse {
+export interface ICompanySummaryResponse {
   message: string;
   error?: ErrorGeneratorTypes;
 }
 
-const companySummaryExists = async (companyURL: URL) => {
+export const createCompanySummary = async ({
+  companyURL,
+  supabase,
+  options,
+}: ICompanySummaryProps): Promise<ICompanySummaryResponse> => {
+  const userResponse = await supabase.auth.getUser();
+  const user = userResponse?.data.user;
+
+  // Check if user already has the company summary
+  if (!options["replaceDocument"]) {
+    if (await userHasCompanySummary(companyURL, supabase)) {
+      const response: ICompanySummaryResponse = {
+        message: "User already has a summary for this company.",
+        error: ErrorGeneratorTypes.USER_ALREADY_OWNS,
+      };
+
+      return response;
+    }
+  }
+
+  // Check if the company summary already exists
+  const doesCompanySummaryExist = await companySummaryExists(
+    companyURL,
+    supabase
+  );
+  if (!options["replaceDocument"] && doesCompanySummaryExist) {
+    // Add user to company summary ownerships -- 'documents' table
+    const documentEntry = {
+      user_id: user?.id,
+      type: "Company Summary",
+      document_path: `companies/${new URL(companyURL).hostname}.md`,
+      name: new URL(companyURL).hostname,
+    };
+    await insertDocumentEntry({ supabase, documentEntry });
+
+    const response: ICompanySummaryResponse = {
+      message: "Company summary already exists. User added to ownership.",
+      error: ErrorGeneratorTypes.NONE_TYPE,
+    };
+
+    return response;
+  }
+
+  // Call generator to generate new company summary
+  const { data: markDownResponse, error } = await getCompanySummaryAsMarkdown(
+    companyURL
+  );
+  if (error) {
+    console.log("Error generating company summary: ", error);
+  }
+
+  // Save the company summary to the database
+  if (!options["replaceDocument"] || !doesCompanySummaryExist) {
+    const { data, error: uploadError } = await supabase.storage
+      .from("user-documents")
+      .upload(`companies/${companyURL.hostname}.md`, markDownResponse);
+
+    if (data) {
+      console.log("Company summary uploaded to storage at: ", data.path);
+    }
+    if (uploadError) {
+      console.log("Error uploading company summary: ", uploadError);
+    }
+
+    // Add user to company summary ownerships -- 'documents' table
+    const documentEntry = {
+      user_id: user?.id,
+      type: "Company Summary",
+      document_path: `companies/${companyURL.hostname}.md`,
+      name: companyURL.hostname,
+    };
+    await insertDocumentEntry({ supabase, documentEntry });
+  } else {
+    console.log("Replacing company summary... for ", companyURL.hostname);
+
+    // Updating the storage bucker
+    const { data, error: UpdateError } = await supabase.storage
+      .from("user-documents")
+      .update(`companies/${companyURL.hostname}.md`, markDownResponse, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (data) {
+      console.log("Company summary updated in storage at: ", data.path);
+    }
+    if (UpdateError) {
+      console.log("Error updating company summary: ", UpdateError);
+    }
+
+    // Retrieve and update the document version
+    const { data: versionData, error: documentError } = await supabase
+      .from("document-versions")
+      .select("*")
+      .eq("name", companyURL.hostname)
+      .limit(1);
+
+    if (documentError) {
+      console.log("Error fetching document version: ", documentError);
+    }
+
+    const version = versionData?.[0].version;
+    await supabase
+      .from("document-versions")
+      .update({ version: version + 1 })
+      .eq("name", companyURL.hostname);
+    console.log(
+      "Version number for ",
+      companyURL.hostname,
+      " updated to ",
+      version + 1
+    );
+  }
+
+  // add company summary to users documents
+  return {
+    message: "Document Created Sucessfully",
+    error: ErrorGeneratorTypes.NONE_TYPE,
+  };
+};
+
+const companySummaryExists = async (
+  companyURL: URL,
+  supabase: SupabaseClient
+) => {
   const { data, error } = await supabase.storage
     .from("user-documents")
     .list("companies");
@@ -35,11 +160,11 @@ const companySummaryExists = async (companyURL: URL) => {
   return false;
 };
 
-const userHasCompanySummary = async (userId: string, companyURL: URL) => {
-  const { data, error } = await supabase
-    .from("documents")
-    .select("*")
-    .eq("user_id", userId);
+const userHasCompanySummary = async (
+  companyURL: URL,
+  supabase: SupabaseClient
+) => {
+  const { data, error } = await supabase.from("documents").select("*");
 
   if (error) {
     throw new Error(`Error fetching users summaries: ${error.message}`);
@@ -56,46 +181,6 @@ const userHasCompanySummary = async (userId: string, companyURL: URL) => {
   }
 
   return false;
-};
-
-export const createCompanySummary = async ({
-  companyURL,
-  userId,
-}: ICompanySummary): Promise<ICompanySummaryResponse> => {
-  // Check if user already has the company summary
-  if (await userHasCompanySummary(userId, companyURL)) {
-    const response: ICompanySummaryResponse = {
-      message: "User already has a summary for this company.",
-      error: ErrorGeneratorTypes.USER_ALREADY_OWNS,
-    };
-
-    return response;
-  }
-
-  // Check if the company summary already exists
-  if (await companySummaryExists(companyURL)) {
-    // Add user to company summary ownerships -- 'documents' table
-    await insertDocumentEntry({
-      user_id: userId,
-      type: "Company Summary",
-      document_path: `companies/${new URL(companyURL).hostname}.md`,
-      name: new URL(companyURL).hostname,
-    });
-
-    const response: ICompanySummaryResponse = {
-      message: "Company summary already exists. User added to ownership.",
-      error: ErrorGeneratorTypes.NONE_TYPE,
-    };
-
-    return response;
-  }
-
-  // Call generator to generate new company summary
-  const companySummaryMarkdown = await getCompanySummaryAsMarkdown(companyURL);
-
-  // Save the company summary to the database
-
-  // add company summary to users documents
 };
 
 function removeMdExtension(str: string) {

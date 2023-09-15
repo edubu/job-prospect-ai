@@ -42,9 +42,7 @@ async function isWebPageURL(url: string): Promise<boolean> {
 
 export async function POST(req: Request) {
   const data = await req.json();
-  console.log(data);
   const { urls }: { urls: string[] } = data;
-  console.log(urls);
 
   if (!urls || !Array.isArray(urls)) {
     return NextResponse.json({ data: null, error: "URLs should be an array" });
