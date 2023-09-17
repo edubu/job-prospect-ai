@@ -78,6 +78,20 @@ export const createCompanySummary = async ({
       console.log("Error uploading company summary: ", uploadError);
     }
 
+    // Add company to document-versions
+    const { data: versionData, error: documentError } = await supabase
+      .from("document-versions")
+      .insert({
+        name: companyURL.hostname,
+        version: 1,
+        document_path: `companies/${companyURL.hostname}.md`,
+        type: "Company Summary",
+      });
+
+    if (documentError) {
+      console.log("Error inserting document version: ", documentError);
+    }
+
     // Add user to company summary ownerships -- 'documents' table
     const documentEntry = {
       user_id: user?.id,
@@ -89,7 +103,7 @@ export const createCompanySummary = async ({
   } else {
     console.log("Replacing company summary... for ", companyURL.hostname);
 
-    // Updating the storage bucker
+    // Updating the storage bucket
     const { data, error: UpdateError } = await supabase.storage
       .from("user-documents")
       .update(`companies/${companyURL.hostname}.md`, markDownResponse, {
