@@ -43,8 +43,9 @@ export default async function DocumentDashboard() {
         <h2 className="text-black font-bold text-2xl mb-4">Recently Created</h2>
 
         <div className="bg-white rounded-lg shadow">
-          <div className="grid grid-cols-3 p-4 border-b border-subHeader">
+          <div className="grid grid-cols-4 p-4 border-b border-subHeader">
             <p className="text-lg font-semibold">Name</p>
+            <p className="text-lg font-semibold">Company Url</p>
             <p className="text-lg font-semibold">Type</p>
             <p className="text-lg font-semibold">Created At</p>
           </div>
@@ -57,8 +58,9 @@ export default async function DocumentDashboard() {
               }}
               key={index}
             >
-              <div className="grid grid-cols-3 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
-                <p>{doc.name}</p>
+              <div className="grid grid-cols-4 gap-x-4 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
+                <p>{doc.document_name}</p>
+                <p>{doc.company_url}</p>
                 <p>{doc.type}</p>
                 <p>{formatTimestamp(doc.created_at)}</p>
               </div>

@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
@@ -10,48 +11,71 @@ const PrepSheetDescription = [
 ];
 
 const PrepSheetCard: React.FC = () => {
-  const [prepSheetCompanyURL, setPrepSheetCompanyURL] = useState("");
+  const [companyURL, setCompanyURL] = useState("");
   const [isCompanyURLValid, setIsCompanyURLValid] = useState(true);
-  const [prepSheetJobURL, setPrepSheetJobURL] = useState("");
+  const [jobURL, setJobURL] = useState("");
   const [isJobURLValid, setIsJobURLValid] = useState(true);
+  const [documentName, setDocumentName] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handlePrepSheetSubmit = (e) => {
+  const router = useRouter();
+
+  const handlePrepSheetSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("/api/validateURL", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ urls: [prepSheetCompanyURL, prepSheetJobURL] }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data[0].isValid) {
-          setIsCompanyURLValid(false);
-        } else {
-          setIsCompanyURLValid(true);
-        }
-
-        if (!data[1].isValid) {
-          setIsJobURLValid(false);
-        } else {
-          setIsJobURLValid(true);
-        }
-
-        if (data[0].isValid && data[1].isValid) {
-          console.log(
-            "Created Prep Sheet with: ",
-            prepSheetCompanyURL,
-            "and",
-            prepSheetJobURL
-          );
-          // submission logic here
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error validating the URL:", error);
+    // validate input
+    try {
+      const validateResponse = await fetch("/api/validateURL", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ urls: [companyURL, jobURL] }),
       });
+
+      const validateData = (await validateResponse.json()).data;
+
+      setIsCompanyURLValid(validateData[0].isValid);
+      setIsJobURLValid(validateData[1].isValid);
+
+      if (validateData[0].isValid && validateData[1].isValid) {
+        console.log("URLs are valid - submitting prep sheet job");
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.log("There was an error validating the URL:", error);
+    }
+
+    // submission logic
+    setIsGenerating(true);
+    // generate company summary
+    try {
+      const generateResponse = await fetch("/api/generatePrepSheet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
+        body: JSON.stringify({
+          url: companyURL,
+          jobURL: jobURL,
+          documentName: documentName,
+        }),
+      });
+
+      const generateData = await generateResponse.json();
+
+      // redirect to document view
+      if (generateData.redirectTo) {
+        router.push(generateData.redirectTo);
+      }
+
+      // console.log(generateData);
+    } catch (error) {
+      console.log("There was an error generating the prep sheet:", error);
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -71,6 +95,23 @@ const PrepSheetCard: React.FC = () => {
       <form onSubmit={handlePrepSheetSubmit}>
         <div className="mb-4">
           <label
+            htmlFor="documentName"
+            className="block text-sm font-medium text-gray-600"
+          >
+            Document Name
+          </label>
+          <input
+            type="text"
+            id="documentName"
+            name="documentName"
+            className={`mt-1 p-2 w-full border rounded-md`}
+            value={documentName}
+            onChange={(e) => setDocumentName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
             htmlFor="companyURL"
             className="block text-sm font-medium text-gray-600"
           >
@@ -83,8 +124,8 @@ const PrepSheetCard: React.FC = () => {
             className={`mt-1 p-2 w-full border ${
               !isCompanyURLValid ? "border-red" : ""
             } rounded-md`}
-            value={prepSheetCompanyURL}
-            onChange={(e) => setPrepSheetCompanyURL(e.target.value)}
+            value={companyURL}
+            onChange={(e) => setCompanyURL(e.target.value)}
             required
           />
           {!isCompanyURLValid && (
@@ -103,8 +144,8 @@ const PrepSheetCard: React.FC = () => {
             className={`mt-1 p-2 w-full border ${
               !isJobURLValid ? "border-red" : ""
             } rounded-md`}
-            value={prepSheetJobURL}
-            onChange={(e) => setPrepSheetJobURL(e.target.value)}
+            value={jobURL}
+            onChange={(e) => setJobURL(e.target.value)}
             required
           />
           {!isJobURLValid && (
@@ -120,6 +161,9 @@ const PrepSheetCard: React.FC = () => {
           </div>
         </button>
       </form>
+
+      {/* Prep Sheet Generator Loading */}
+      {isGenerating && <div className="mt-3 pt-3">Generating document... </div>}
     </div>
   );
 };

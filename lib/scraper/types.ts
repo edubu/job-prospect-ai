@@ -3,4 +3,5 @@ export interface PageContent {
   bodyText: string;
   title: string;
   links: string[];
+  summary?: string | null;
 }

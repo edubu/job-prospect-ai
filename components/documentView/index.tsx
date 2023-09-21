@@ -38,7 +38,7 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
       const { data, error } = await supabase
         .from("document-versions")
         .select("*")
-        .eq("name", documentInfo.name)
+        .eq("company_url", documentInfo.company_url)
         .limit(1);
 
       if (error) {

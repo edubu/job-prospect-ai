@@ -6,6 +6,7 @@ import { getCompanySummaryAsMarkdown } from "./generator";
 interface ICompanySummaryProps {
   companyURL: URL;
   supabase: SupabaseClient;
+  documentName: string;
   options: Record<string, boolean>;
 }
 
@@ -16,6 +17,7 @@ export interface ICompanySummaryResponse {
 
 export const createCompanySummary = async ({
   companyURL,
+  documentName,
   supabase,
   options,
 }: ICompanySummaryProps): Promise<ICompanySummaryResponse> => {
@@ -45,7 +47,8 @@ export const createCompanySummary = async ({
       user_id: user?.id,
       type: "Company Summary",
       document_path: `companies/${new URL(companyURL).hostname}.md`,
-      name: new URL(companyURL).hostname,
+      company_url: new URL(companyURL).hostname,
+      name: documentName,
     };
     await insertDocumentEntry({ supabase, documentEntry });
 
@@ -65,6 +68,10 @@ export const createCompanySummary = async ({
     console.log("Error generating company summary: ", error);
   }
 
+  if (!markDownResponse) {
+    throw new Error(`Error generating company summary: ${error}`);
+  }
+
   // Save the company summary to the database
   if (!options["replaceDocument"] || !doesCompanySummaryExist) {
     const { data, error: uploadError } = await supabase.storage
@@ -82,7 +89,7 @@ export const createCompanySummary = async ({
     const { data: versionData, error: documentError } = await supabase
       .from("document-versions")
       .insert({
-        name: companyURL.hostname,
+        company_url: companyURL.hostname,
         version: 1,
         document_path: `companies/${companyURL.hostname}.md`,
         type: "Company Summary",
@@ -97,7 +104,8 @@ export const createCompanySummary = async ({
       user_id: user?.id,
       type: "Company Summary",
       document_path: `companies/${companyURL.hostname}.md`,
-      name: companyURL.hostname,
+      company_url: companyURL.hostname,
+      name: documentName,
     };
     await insertDocumentEntry({ supabase, documentEntry });
   } else {
@@ -122,7 +130,7 @@ export const createCompanySummary = async ({
     const { data: versionData, error: documentError } = await supabase
       .from("document-versions")
       .select("*")
-      .eq("name", companyURL.hostname)
+      .eq("company_url", companyURL.hostname)
       .limit(1);
 
     if (documentError) {
@@ -133,7 +141,7 @@ export const createCompanySummary = async ({
     await supabase
       .from("document-versions")
       .update({ version: version + 1 })
-      .eq("name", companyURL.hostname);
+      .eq("company_url", companyURL.hostname);
     console.log(
       "Version number for ",
       companyURL.hostname,
@@ -189,7 +197,7 @@ const userHasCompanySummary = async (
   }
 
   for (let i = 0; i < data.length; ++i) {
-    if (data[i].name === companyURL.hostname) {
+    if (data[i].company_url === companyURL.hostname) {
       return true;
     }
   }

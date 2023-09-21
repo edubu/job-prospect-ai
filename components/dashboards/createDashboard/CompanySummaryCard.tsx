@@ -16,6 +16,7 @@ const CompanySummarizerDescription = [
 
 const CompanySummaryCard: React.FC = () => {
   const [companyURL, setCompanyURL] = useState("");
+  const [documentName, setDocumentName] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -30,7 +31,7 @@ const CompanySummaryCard: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url: companyURL }),
+        body: JSON.stringify({ urls: [companyURL] }),
       });
 
       const validateData = (await validateResponse.json()).data;
@@ -54,7 +55,7 @@ const CompanySummaryCard: React.FC = () => {
           "Content-Type": "application/json",
           "Cache-Control": "no-cache",
         },
-        body: JSON.stringify({ url: companyURL }),
+        body: JSON.stringify({ url: companyURL, documentName: documentName }),
       });
 
       const generateData = await generateResponse.json();
@@ -84,6 +85,23 @@ const CompanySummaryCard: React.FC = () => {
 
       {/* Company Summarizer Input Form */}
       <form onSubmit={handleSubmit} method="post">
+        <div className="mb-4">
+          <label
+            htmlFor="documentName"
+            className="block text-sm font-medium text-gray-600"
+          >
+            Document Name
+          </label>
+          <input
+            type="text"
+            id="documentName"
+            name="documentName"
+            className={`mt-1 p-2 w-full border rounded-md`}
+            value={documentName}
+            onChange={(e) => setDocumentName(e.target.value)}
+            required
+          />
+        </div>
         <div className="mb-4">
           <label
             htmlFor="companyURL"

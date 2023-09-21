@@ -5,6 +5,7 @@ export interface IDocumentEntry {
   type: string;
   document_path: string;
   name: string;
+  company_url: string;
 }
 
 export interface IInsertDocumentEntryProps {

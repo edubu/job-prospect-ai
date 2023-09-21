@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import {
-  createCompanySummary,
-  ICompanySummaryResponse,
-} from "@/lib/documents/summaries";
+  createPrepSheet,
+  IPrepSheetResponse,
+} from "@/lib/documents/prepSheets";
 
 export const dynamic = "force-dynamic";
 
@@ -14,21 +14,31 @@ export async function POST(req: Request) {
   // Parse the request body
   const requestBody = await req.json();
   const companyURL = new URL(requestBody.url);
-  const documentName = requestBody.documentName;
-  console.log("[INFO] Company Summary requested for", companyURL.origin);
+  const jobURL = new URL(requestBody.jobURL);
+  console.log(
+    "[INFO] Prep sheet requested for",
+    companyURL.origin,
+    "for job",
+    jobURL.origin
+  );
 
   // create supabase client
   const supabase = createRouteHandlerClient({ cookies });
 
-  // Call the company summarizer
+  // Set options for if a duplicate document is made
   const options = {
     replaceDocument: true,
   };
 
-  const createCompanySummaryResponse: ICompanySummaryResponse =
-    await createCompanySummary({ companyURL, documentName, supabase, options });
+  // Call the prep
+  const createPrepSheetResponse: IPrepSheetResponse = await createPrepSheet({
+    companyURL,
+    jobURL,
+    supabase,
+    options,
+  });
 
-  console.log("[INFO]", createCompanySummaryResponse.message);
+  console.log("[INFO]", createPrepSheetResponse.message);
 
   return NextResponse.json({
     redirectTo: requestUrl.origin + "/dashboard",
