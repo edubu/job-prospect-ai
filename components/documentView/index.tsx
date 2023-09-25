@@ -73,7 +73,7 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
     };
 
     fetchDocument();
-  }, [documentId]);
+  }, [documentId, supabase]);
 
   if (markdownContent === "") {
     return <h1>Loading...</h1>;
@@ -81,7 +81,8 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
 
   return (
     <div className={`${styles["markdown-container"]} bg-subBackground`}>
-      <ReactMarkdown children={markdownContent} />
+      {/* <ReactMarkdown children={markdownContent} /> */}
+      <ReactMarkdown>{markdownContent}</ReactMarkdown>
     </div>
   );
 };

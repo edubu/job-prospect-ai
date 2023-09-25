@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
     };
 
     checkIfSessionExists();
-  }, []);
+  }, [router, supabase.auth]);
 
   return (
     <div className="flex justify-center items-center h-screen">

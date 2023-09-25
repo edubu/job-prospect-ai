@@ -28,7 +28,7 @@ const AccountButton: React.FC = () => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase.auth]);
 
   useEffect(() => {
     // Click outside handler
