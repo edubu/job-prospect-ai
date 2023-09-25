@@ -11,7 +11,7 @@ const CreateDashboard: React.FC = () => {
       <div className="container flex items-center flex-grow h-full">
         <div className="container flex flex-col text-subHeader text-md p-4">
           <p>
-            See our products below to choose which document you'd like to
+            See our products below to choose which document you&apos;d like to
             create.
           </p>
         </div>

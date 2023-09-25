@@ -50,7 +50,7 @@ export default async function DocumentDashboard() {
               </div>
               <p className="font-semibold text-black text-lg">No Documents</p>
               <p className="text-subHeader">
-                You don't have any documents yet. Start creating.
+                You don&apos;t have any documents yet. Start creating.
               </p>
             </div>
           </div>
