@@ -39,8 +39,8 @@ const Logo = () => {
         <Image
           src="/images/logo.png"
           alt="Logo"
-          width="40"
-          height="40"
+          width="64"
+          height="64"
           className="relative"
         />
       </Link>

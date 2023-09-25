@@ -78,9 +78,17 @@ const PrepSheetCard: React.FC = () => {
     }
   };
 
+  const handleEmpty = async (e) => {
+    e.preventDefault();
+    console.log("Prep sheet requested. Still not developed. Doing nothing.");
+  };
+
   return (
     <div className="flex flex-col mx-4 h-full border border-black rounded-lg p-3">
       <h1 className="text-black font-bold text-md pb-4">
+        <span className="bg-activeBtn rounded-lg py-1 px-2 font-semiBold">
+          Coming Soon
+        </span>{" "}
         Interview Prep Sheet
       </h1>
       <ul className="text-subHeader py-3 mb-5">
@@ -92,7 +100,7 @@ const PrepSheetCard: React.FC = () => {
       </ul>
 
       {/* Prep Sheet Input Form */}
-      <form onSubmit={handlePrepSheetSubmit}>
+      <form onSubmit={handleEmpty}>
         <div className="mb-4">
           <label
             htmlFor="documentName"

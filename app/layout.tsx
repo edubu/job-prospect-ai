@@ -19,7 +19,8 @@ const Layout: React.FC = ({ children }: { children: React.ReactNode }) => {
       <Head>
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
-        <link rel="icon" href="/images/logo.png" />
+        {/* <link rel="icon" href="/images/logo.png" /> */}
+        {/* <link rel="icon" type="image/png" href="/images/logo.png" /> */}
       </Head>
 
       <body className="min-h-screen">

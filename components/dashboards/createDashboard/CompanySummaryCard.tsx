@@ -74,7 +74,12 @@ const CompanySummaryCard: React.FC = () => {
 
   return (
     <div className="flex flex-col mx-4 h-full border border-black rounded-lg p-3 mb-4">
-      <h1 className="text-black font-bold text-md pb-4">Company Summary</h1>
+      <h1 className="text-black font-bold text-md pb-4">
+        <span className="bg-activeBtn rounded-lg py-1 px-2 font-semiBold">
+          Beta
+        </span>{" "}
+        Company Summary
+      </h1>
       <ul className="text-subHeader py-3 mb-5">
         {CompanySummarizerDescription.map((description, index) => (
           <li key={index} className="list-disc list-inside py-1">

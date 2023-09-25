@@ -16,7 +16,7 @@ const FeaturesSection = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <FeatureCard
           imageSrc="/images/industryInsights.png"
-          header="Dive deep into industry insights"
+          header="Immerse yourself into industry insights"
           subHeader="Navigate the nuances of any sector with precision. Our platform curates comprehensive industry backgrounds, giving you an edge before your interview."
         />
         <FeatureCard
@@ -30,9 +30,8 @@ const FeaturesSection = () => {
           subHeader="From tech jargon to role-specific nuances, get a clear breakdown of every preferred qualification. Understand not just the 'what', but the 'why' and 'how' it matters to your dream job."
         />
 
-        {/* TODO: change header */}
         <FeatureCard
-          imageSrc="/images/jobQuals.png"
+          imageSrc="/images/documentDashboard.png"
           header="Dive into data-driven details"
           subHeader="Get a holistic view of your potential employer, from job-specific salary benchmarks to company scale. Know more, negotiate better."
         />

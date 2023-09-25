@@ -4,7 +4,7 @@ export interface IDocumentEntry {
   user_id: string | undefined;
   type: string;
   document_path: string;
-  name: string;
+  document_name: string;
   company_url: string;
 }
 

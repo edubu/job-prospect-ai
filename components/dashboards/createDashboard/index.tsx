@@ -18,7 +18,9 @@ const CreateDashboard: React.FC = () => {
       </div>
 
       {/* Products Section */}
-      <h1 className="text-black font-bold text-2xl pt-3 pb-2 pl-4">Products</h1>
+      <h1 className="text-black font-bold text-2xl pt-3 pb-2 pl-4">
+        Documents
+      </h1>
       <div className="lg:flex md:grid-cols-1 sm:grid-cols-1 m-4 ml-0 h-full gap-4">
         {/* Product: Company Summary */}
         <CompanySummaryCard />

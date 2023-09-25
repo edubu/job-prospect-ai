@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import LoginButton from "./LoginButton";
@@ -9,6 +11,20 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
+  const [userCount, setUserCount] = useState<number>(0);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const res = await fetch("/api/getAuthenticatedUsers", {
+        method: "GET",
+      });
+      const data = await res.json();
+      setUserCount(data.userCount);
+    };
+
+    getUsers();
+  });
+
   return (
     <>
       <div
@@ -32,13 +48,20 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
               Support
             </Link>
           )}
+
+          {!isDashboard ? null : (
+            <Link href="\dashboard" className="p-4">
+              Feedback
+            </Link>
+          )}
         </div>
 
-        {/* Right side of navbar */}
-        <div className="flex gap-x-6 text-white items-center">
-          {!isDashboard ? <LoginButton /> : <AccountButton />}
-        </div>
-        {/* </div> */}
+        {/* SignIn/Dashboard button */}
+        {userCount >= 10 ? null : (
+          <div className="flex gap-x-6 text-white items-center">
+            {!isDashboard ? <LoginButton /> : <AccountButton />}
+          </div>
+        )}
       </div>
     </>
   );

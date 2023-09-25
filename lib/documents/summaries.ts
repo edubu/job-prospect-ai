@@ -48,7 +48,7 @@ export const createCompanySummary = async ({
       type: "Company Summary",
       document_path: `companies/${new URL(companyURL).hostname}.md`,
       company_url: new URL(companyURL).hostname,
-      name: documentName,
+      document_name: documentName,
     };
     await insertDocumentEntry({ supabase, documentEntry });
 
@@ -105,7 +105,7 @@ export const createCompanySummary = async ({
       type: "Company Summary",
       document_path: `companies/${companyURL.hostname}.md`,
       company_url: companyURL.hostname,
-      name: documentName,
+      document_name: documentName,
     };
     await insertDocumentEntry({ supabase, documentEntry });
   } else {

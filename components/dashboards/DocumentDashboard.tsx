@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 // Icons
 import { AiOutlinePlus } from "react-icons/ai";
+import { GrDocumentText } from "react-icons/gr";
 
 import { formatTimestamp } from "@/lib/utils/date";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -41,32 +42,45 @@ export default async function DocumentDashboard() {
       {/* Recently Created Documents */}
       <div className="mt-8 p-4">
         <h2 className="text-black font-bold text-2xl mb-4">Recently Created</h2>
-
-        <div className="bg-white rounded-lg shadow">
-          <div className="grid grid-cols-4 p-4 border-b border-subHeader">
-            <p className="text-lg font-semibold">Name</p>
-            <p className="text-lg font-semibold">Company Url</p>
-            <p className="text-lg font-semibold">Type</p>
-            <p className="text-lg font-semibold">Created At</p>
-          </div>
-
-          {documents?.map((doc, index) => (
-            <Link
-              href={{
-                pathname: `/dashboard/documents`,
-                query: { documentId: doc.id },
-              }}
-              key={index}
-            >
-              <div className="grid grid-cols-4 gap-x-4 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
-                <p>{doc.document_name}</p>
-                <p>{doc.company_url}</p>
-                <p>{doc.type}</p>
-                <p>{formatTimestamp(doc.created_at)}</p>
+        {documents?.length === 0 ? (
+          <div className="flex justify-center items-center bg-white p-6 rounded-md border-dotted border-2 border-subHeader w-full max-w-full h-64">
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex justify-center items-center bg-subBackground rounded-full w-16 h-16 p-3 m-3">
+                <GrDocumentText size="3em" className="m-0" />
               </div>
-            </Link>
-          ))}
-        </div>
+              <p className="font-semibold text-black text-lg">No Documents</p>
+              <p className="text-subHeader">
+                You don't have any documents yet. Start creating.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow">
+            <div className="grid grid-cols-4 p-4 border-b border-subHeader">
+              <p className="text-lg font-semibold">Name</p>
+              <p className="text-lg font-semibold">Company Url</p>
+              <p className="text-lg font-semibold">Type</p>
+              <p className="text-lg font-semibold">Created At</p>
+            </div>
+
+            {documents?.map((doc, index) => (
+              <Link
+                href={{
+                  pathname: `/dashboard/documents`,
+                  query: { documentId: doc.id },
+                }}
+                key={index}
+              >
+                <div className="grid grid-cols-4 gap-x-4 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
+                  <p>{doc.document_name}</p>
+                  <p>{doc.company_url}</p>
+                  <p>{doc.type}</p>
+                  <p>{formatTimestamp(doc.created_at)}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

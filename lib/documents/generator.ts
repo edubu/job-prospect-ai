@@ -34,7 +34,7 @@ export const getCompanySummaryAsMarkdown = async (companyURL: URL) => {
   const prioritizedLinks = await getPrioritizedLinks(
     uniqueLinks,
     companyURL,
-    20
+    10
   );
 
   // Scrape all pages that are linked on the main page
@@ -42,6 +42,7 @@ export const getCompanySummaryAsMarkdown = async (companyURL: URL) => {
   const scrapedPages: PageContent[] = await Promise.all(
     prioritizedLinks.map((link) => getPageContent(link))
   );
+  console.log(`[INFO] Scraping ${scrapedPages.length} pages complete`);
   // Add main page to pages that will be summarized
   scrapedPages.push(mainPageContent);
 
@@ -54,6 +55,7 @@ export const getCompanySummaryAsMarkdown = async (companyURL: URL) => {
   const summarizedPages: PageContent[] = await Promise.all(
     scrapedPages.map((page) => getPageSummary(page))
   );
+  console.log(`Summarizing ${scrapedPages.length} pages complete`);
 
   // Generate a summary of the website
   const prompt = `
@@ -126,6 +128,7 @@ export const getCompanySummaryAsMarkdown = async (companyURL: URL) => {
     - Removing any mentions of scraped data
     - Removing any sections that do not provide any information(ie. if there is no information on the company size then remove the section)
     - Fixing any grammar(such as capitalization, punctuation, etc.)
+    - Always have the company name as the title of the document.
 
     Above all, do not take any information out of the summary. Only take out parts that do not give information.
 
@@ -176,26 +179,32 @@ const getPageSummary = async (pageContent: PageContent) => {
     - if you are summarizing a url of https://www.athenahealth.com/careers/locations, your summary will include a bulleted list of the locations that the company athenahealth has offices in.
     - if you are summarizing a url of https://www.athenahealth.com/about/who-we-are, your summary will include facts and details about the company athenhealth. Such as when it was founded, their culture, etc.
   `;
-  const pageSummaryCompletion = await openai.chat.completions.create({
-    model: process.env.OPENAI_CHAT_MODEL as string,
-    messages: [
-      {
-        role: "system",
-        content: "You are a text summarization bot",
-      },
-      { role: "user", content: pageSummaryPrompt },
-    ],
-    temperature: 0.7,
-  });
 
-  const pageSummarizationCompletion =
-    pageSummaryCompletion.choices[0].message.content;
+  try {
+    const pageSummaryCompletion = await openai.chat.completions.create({
+      model: process.env.OPENAI_CHAT_MODEL as string,
+      messages: [
+        {
+          role: "system",
+          content: "You are a text summarization bot",
+        },
+        { role: "user", content: pageSummaryPrompt },
+      ],
+      temperature: 0.7,
+    });
 
-  if (!pageSummaryCompletion) {
-    throw new Error(`Unable to generate page summary for ${pageContent.url}`);
+    const pageSummarizationCompletion =
+      pageSummaryCompletion.choices[0].message.content;
+
+    if (!pageSummaryCompletion) {
+      throw new Error(`Unable to generate page summary for ${pageContent.url}`);
+    }
+
+    pageContent.summary = pageSummarizationCompletion;
+  } catch (e) {
+    console.error(`Unable to generate page summary for ${pageContent.url}`);
+    console.error(e);
   }
-
-  pageContent.summary = pageSummarizationCompletion;
 
   return pageContent;
 };
@@ -213,7 +222,7 @@ const getPrioritizedLinks = async (
   - I may choose 4 links that have /solutions in the title so that I can learn more about their products.
   - I may choose 2 links that have /about or /who-we-are in the title so that I can learn more about the company.
   - I may choose 2 links that have /careers in the title so that I can learn more about the company culture.
-  Give a list of only the ones that seem most important. Return a maximum of ${numLinks} links below. Include as many as possible within the maximum limit.
+  Give a list of only the ones that seem most important. Return a maximum of ${numLinks} links below.
   The links should that you choose should all be within the same domain as the main page. 
   For example, if the main page is https://www.athenahealth.com, then all of the links should be within the domain of athenahealth.com.
   I want the output to be formatted so that I can use JSON.parse() on it to receive an array of links.
