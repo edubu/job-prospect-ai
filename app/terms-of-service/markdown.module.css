@@ -1,0 +1,104 @@
+/* Add this inside your scoped component or a separate CSS file */
+
+.markdown-container {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  padding: 1em;
+  background-color: #e4e8ed;
+  border-radius: 0.5em;
+}
+
+.markdown-container h1,
+.markdown-container h2,
+.markdown-container h3,
+.markdown-container h4,
+.markdown-container h5,
+.markdown-container h6 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.markdown-container h1 {
+  font-size: 2em;
+}
+
+.markdown-container h2 {
+  font-size: 1.5em;
+}
+
+.markdown-container h3 {
+  font-size: 1.3em;
+}
+
+.markdown-container h4 {
+  font-size: 1.1em;
+}
+
+.markdown-container p {
+  margin-bottom: 1em;
+}
+
+.markdown-container ul,
+.markdown-container ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+  list-style-type: disc; /* Add this line for bullet points */
+}
+
+.markdown-container ol {
+  list-style-type: decimal; /* Use numbers for ordered lists */
+}
+
+.markdown-container ul ul,
+.markdown-container ol ol,
+.markdown-container ul ol,
+.markdown-container ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-container blockquote {
+  padding: 0.5em 1em;
+  margin: 1em 0;
+  border-left: 4px solid #ddd;
+  color: #555;
+}
+
+.markdown-container em {
+  font-style: italic;
+}
+
+.markdown-container strong {
+  font-weight: bold;
+}
+
+.markdown-container code {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #f3f3f3;
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
+}
+
+.markdown-container pre {
+  font-family: "Courier New", Courier, monospace;
+  background-color: #f3f3f3;
+  padding: 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+}
+
+.markdown-container pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-container a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-container a:hover {
+  text-decoration: underline;
+}
