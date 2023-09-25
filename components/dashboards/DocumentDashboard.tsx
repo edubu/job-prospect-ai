@@ -66,7 +66,7 @@ export default async function DocumentDashboard() {
             {documents?.map((doc, index) => (
               <Link
                 href={{
-                  pathname: `/dashboard/documents`,
+                  pathname: "/dashboard/documents",
                   query: { documentId: doc.id },
                 }}
                 key={index}

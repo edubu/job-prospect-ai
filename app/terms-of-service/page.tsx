@@ -64,7 +64,8 @@ the use of the Site, please contact us at:
 
   return (
     <div className={`${styles["markdown-container"]} bg-subBackground`}>
-      <ReactMarkdown children={markdownContent} />
+      {/* <ReactMarkdown children={markdownContent} /> */}
+      <ReactMarkdown>{markdownContent}</ReactMarkdown>
     </div>
   );
 };

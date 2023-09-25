@@ -59,7 +59,7 @@ If you have any questions about this privacy policy or our privacy practices, pl
 
   return (
     <div className={`${styles["markdown-container"]} bg-subBackground`}>
-      <ReactMarkdown children={markdownContent} />
+      <ReactMarkdown>{markdownContent}</ReactMarkdown>
     </div>
   );
 };
