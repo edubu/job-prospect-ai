@@ -43,14 +43,15 @@ const userHasPrepSheet = async (
   const userResponse = await supabase.auth.getUser();
   const user = userResponse?.data.user;
 
-  const { data: prepSheets, error } = await supabase
-    .from("documents")
-    .select("*")
-    .eq();
+  // const { data: prepSheets, error } = await supabase
+  //   .from("documents")
+  //   .select("*")
+  //   .eq();
 
-  if (error) {
-    throw new Error(`Unable to get user's prep sheets: ${error}`);
-  }
+  // if (error) {
+  //   throw new Error(`Unable to get user's prep sheets: ${error}`);
+  // }
 
-  return prepSheets.length > 0;
+  // return prepSheets.length > 0;
+  return false;
 };
