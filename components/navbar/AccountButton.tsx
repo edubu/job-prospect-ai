@@ -12,7 +12,7 @@ import {
 const AccountButton: React.FC = () => {
   const [session, setSession] = useState<Session | null>();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   const supabase = createClientComponentClient();
