@@ -3,6 +3,7 @@ import "./globals.css";
 
 import React from "react";
 import Head from "next/head";
+import { Analytics } from "@vercel/analytics/react";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -26,7 +27,8 @@ const Layout: React.FC = ({ children }: { children: React.ReactNode }) => {
       </Head>
 
       <body className="min-h-screen">
-        <main className="">{children}</main>
+        {children}
+        <Analytics />
       </body>
     </html>
   );
