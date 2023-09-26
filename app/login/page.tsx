@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
         supabaseClient={supabase}
         providers={["google"]}
         appearance={{ theme: ThemeSupa }}
-        redirectTo={"http://localhost:3000/auth/callback"}
+        redirectTo={"https://jobprospect.ai/auth/callback"}
       />
     </div>
   );
