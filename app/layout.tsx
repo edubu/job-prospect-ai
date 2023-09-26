@@ -7,6 +7,8 @@ import Head from "next/head";
 import dotenv from "dotenv";
 dotenv.config();
 
+export const revalidate = 0;
+
 export const metadata = {
   title: "Job Prospect AI",
   description:
