@@ -23,13 +23,13 @@ const LoginButton = () => {
     <>
       {!user ? (
         <Link href="/login">
-          <button className="h-10 rounded-lg bg-activeBtn font-bold px-5">
+          <button className="h-8 md:h-10 text-sm rounded-lg bg-activeBtn font-bold px-3 md:px-5">
             Sign In
           </button>
         </Link>
       ) : (
         <Link href="/dashboard">
-          <button className="h-10 rounded-lg bg-activeBtn font-bold px-5">
+          <button className="h-8 md:h-10 rounded-lg bg-activeBtn font-bold px-3 md:px-5">
             Dashboard
           </button>
         </Link>

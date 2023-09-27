@@ -12,6 +12,22 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
   const [userCount, setUserCount] = useState<number>(0);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 462);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Call handleResize initially to set the initial state
+    handleResize();
+
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const getUsers = async () => {
@@ -40,9 +56,11 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
           </Link>
 
           {!isDashboard ? (
-            <Link href="#features" className="p-4">
-              Features
-            </Link>
+            isMobile ? null : (
+              <Link href="#features" className="p-4">
+                Features
+              </Link>
+            )
           ) : (
             <Link href="https://forms.gle/QC5tYibMiUR5RTuR7" className="p-4">
               Support

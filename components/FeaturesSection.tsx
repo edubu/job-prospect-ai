@@ -4,10 +4,10 @@ import FeatureCard from "./FeatureCard";
 const FeaturesSection = () => {
   return (
     <div id="features" className="container mx-auto mt-10 py-10">
-      <h1 className="text-center text-5xl font-bold mb-4">
+      <h1 className="text-center font-bold mb-4 text-4xl md:text-6xl">
         10x your productivity
       </h1>
-      <p className="text-center text-subHeader mb-8">
+      <p className="text-center text-subHeader mb-8 px-5">
         Tired of prepping for Coffee Chats, Interviews, or Career Fairs? Let us
         help you prepare by doing the research for you and creating
         lightning-fast, comprehensive, and personalized prep sheets so that you
