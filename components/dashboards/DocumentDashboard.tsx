@@ -1,6 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { cookies } from "next/headers";
 //import supabase from "@/lib/utils/supabaseClient";
 
 // Icons
@@ -8,10 +9,16 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { GrDocumentText } from "react-icons/gr";
 
 import { formatTimestamp } from "@/lib/utils/date";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 
 export default async function DocumentDashboard() {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+
+  const [doucuments, setDocuments] = useState([]);
+
+  useEffect(() => {});
 
   const response = await supabase
     .from("documents")
@@ -19,20 +26,25 @@ export default async function DocumentDashboard() {
     .order("created_at", { ascending: false });
   const documents = response.data;
 
+  const goToDocument = (document: any) => {
+    router.push(`/dashboard/documents?documentId=${document.id}`);
+    //redirect(`/dashboard/documents?documentId=${document.id}`);
+  };
+
   return (
-    <div className="flex flex-col mx-4 h-full">
-      <h1 className="text-black font-bold text-3xl pt-3 pb-2 pl-4">
+    <div className="flex flex-col m-4 w-screen">
+      <h1 className="text-black font-bold text-2xl md:text-3xl pt-3 pb-2 pl-4 ">
         Welcome to Job Prospect AI
       </h1>
       <div className="container flex items-center flex-grow h-full">
-        <div className="container flex flex-col text-subHeader text-md p-4">
+        <div className="container flenx flex-col text-subHeader text-md p-4">
           <p>
             Let us help you generate a prep sheet or company overview with ease.
           </p>
           <p>What do you want to create today?</p>
         </div>
         <Link href="/dashboard/create">
-          <div className="bg-newDocBtn rounded-lg flex items-center justify-center text-newDocBtnText cursor-pointer w-40 py-1 px-2 ml-10 mr-4">
+          <div className="bg-newDocBtn rounded-lg flex items-center justify-center text-newDocBtnText cursor-pointer w-40 py-1 px-2 ml-10 mr-10">
             <AiOutlinePlus size="1.5em" className="mr-2" />
             <span className="text-md whitespace-nowrap">New Document</span>
           </div>
@@ -55,31 +67,70 @@ export default async function DocumentDashboard() {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow">
-            <div className="grid grid-cols-4 p-4 border-b border-subHeader">
-              <p className="text-lg font-semibold">Name</p>
-              <p className="text-lg font-semibold">Company Url</p>
-              <p className="text-lg font-semibold">Type</p>
-              <p className="text-lg font-semibold">Created At</p>
-            </div>
+          <table className="table-auto">
+            <thead>
+              <tr>
+                <th className="p-4 bg-subBackground text-lg font-semibold">
+                  Name
+                </th>
+                <th className="p-4 bg-subBackground text-lg font-semibold">
+                  Company Url
+                </th>
+                <th className="p-4 bg-subBackground text-lg font-semibold">
+                  Type
+                </th>
+                <th className="p-4 bg-subBackground text-lg font-semibold">
+                  Created At
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {documents?.map((doc, index) => (
+                <tr
+                  onClick={() => goToDocument(doc)}
+                  className="cursor-pointer hover:bg-subBackground"
+                >
+                  <td className="p-4">{doc.document_name}</td>
+                  <td className="p-4">{doc.company_url}</td>
+                  <td className="p-4">{doc.type}</td>
+                  <td className="p-4">{formatTimestamp(doc.created_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-            {documents?.map((doc, index) => (
-              <Link
-                href={{
-                  pathname: "/dashboard/documents",
-                  query: { documentId: doc.id },
-                }}
-                key={index}
-              >
-                <div className="grid grid-cols-4 gap-x-4 p-4 border-b border-subHeader hover:bg-activeBtn cursor-pointer">
-                  <p>{doc.document_name}</p>
-                  <p>{doc.company_url}</p>
-                  <p>{doc.type}</p>
-                  <p>{formatTimestamp(doc.created_at)}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          // <div className="bg-white rounded-lg shadow overflow-x-auto mr-5">
+          //   <div className="grid grid-cols-4 gap-x-40 bg-subBackground">
+          //     <div className="p-4 bg-subBackground text-lg font-semibold">
+          //       Name
+          //     </div>
+          //     <div className="p-4 bg-subBackground text-lg font-semibold">
+          //       Company Url
+          //     </div>
+          //     <div className="p-4 bg-subBackground text-lg font-semibold">
+          //       Type
+          //     </div>
+          //     <div className="p-4 text-lg font-semibold">Created At</div>
+          //   </div>
+          //   <div className="">
+          //     {documents?.map((doc, index) => (
+          //       <Link
+          //         href={{
+          //           pathname: "/dashboard/documents",
+          //           query: { documentId: doc.id },
+          //         }}
+          //         key={index}
+          //       >
+          //         <div className="grid grid-cols-4 p-4 gap-x-40 bg-white hover:bg-subBackground cursor-pointer">
+          //           <div className="p-4">{doc.document_name}</div>
+          //           <div className="p-4">{doc.company_url}</div>
+          //           <div className="p-4">{doc.type}</div>
+          //           <div className="p-4">{formatTimestamp(doc.created_at)}</div>
+          //         </div>
+          //       </Link>
+          //     ))}
+          //   </div>
+          // </div>
         )}
       </div>
     </div>
