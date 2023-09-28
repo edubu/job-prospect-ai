@@ -117,8 +117,8 @@ const DocumentDashboard: React.FC = () => {
           // </div>
 
           <div className="relative overflow-x-auto">
-            <table className="w-full text-sm text-left text-black dark:text-gray-400">
-              <thead className="text-xs text-darkGray font-bold uppercase bg-subBackground dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-left text-black">
+              <thead className="text-xs text-darkGray font-bold uppercase bg-subBackground">
                 <tr>
                   <th scope="col" className="px-6 py-3">
                     Name
@@ -138,12 +138,12 @@ const DocumentDashboard: React.FC = () => {
                 {documents?.map((doc, index) => (
                   <tr
                     onClick={() => goToDocument(doc)}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-subBackground"
+                    className="bg-white border-b hover:bg-subBackground"
                     key={index}
                   >
                     <th
                       scope="row"
-                      className="px-6 py-4 text-darkGray font-semiBold whitespace-nowrap dark:text-white"
+                      className="px-6 py-4 text-darkGray font-semiBold whitespace-nowrap"
                     >
                       {doc.document_name}
                     </th>
