@@ -138,7 +138,7 @@ const DocumentDashboard: React.FC = () => {
                 {documents?.map((doc, index) => (
                   <tr
                     onClick={() => goToDocument(doc)}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-subBackground"
                     key={index}
                   >
                     <th
