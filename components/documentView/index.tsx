@@ -55,7 +55,6 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
       const documentPath = documentInfo.document_path;
 
       // Fetch document from supabase bucket
-      console.log("fetching document version: ", documentVersion);
       const { data, error } = await supabase.storage
         .from("user-documents")
         .download(`${documentPath}?version=${documentVersion}`);
@@ -67,7 +66,6 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
 
       // Convert Blob to text
       const text = await data.text();
-      console.log(text);
 
       setMarkdownContent(text);
     };
