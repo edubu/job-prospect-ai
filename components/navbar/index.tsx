@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
 
         {/* SignIn/Dashboard button */}
         {userCount >= 10 ? null : (
-          <div className="flex gap-x-6 text-white items-center">
+          <div className="flex gap-x-6 text-black font-semiBold items-center">
             {!isDashboard ? <LoginButton /> : <AccountButton />}
           </div>
         )}
