@@ -44,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
   return (
     <>
       <div
-        className={`container flex justify-between mx-auto px-4 py-3 ${
+        className={`container flex w-full justify-between mx-auto px-4 py-3 ${
           isDashboard ? "border-b-0.5 border-subHeader" : ""
         }`}
       >
@@ -63,12 +63,6 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
             )
           ) : (
             <Link href="https://forms.gle/QC5tYibMiUR5RTuR7" className="p-4">
-              Support
-            </Link>
-          )}
-
-          {!isDashboard ? null : (
-            <Link href="\dashboard" className="p-4">
               Feedback
             </Link>
           )}
@@ -76,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
 
         {/* SignIn/Dashboard button */}
         {userCount >= 10 ? null : (
-          <div className="flex gap-x-6 text-white items-center">
+          <div className="flex gap-x-6 text-black font-semiBold items-center">
             {!isDashboard ? <LoginButton /> : <AccountButton />}
           </div>
         )}

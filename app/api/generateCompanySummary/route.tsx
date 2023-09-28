@@ -6,6 +6,7 @@ import {
   ICompanySummaryResponse,
 } from "@/lib/documents/summaries";
 
+export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {

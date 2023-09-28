@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "@/components/navbar";
-import SideNavbar from "@/components/sideNavbar";
+import DashboardNavbar from "@/components/dashboardNavbar";
 
 export default function DashboardLayout({
   children,
@@ -11,8 +11,8 @@ export default function DashboardLayout({
     <>
       <Navbar isDashboard={true} />
 
-      <div className="container flex m-4">
-        <SideNavbar />
+      <div className="container flex mb-10">
+        <DashboardNavbar />
         {children}
       </div>
     </>

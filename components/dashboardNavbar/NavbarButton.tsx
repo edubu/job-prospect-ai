@@ -8,9 +8,15 @@ interface NavbarButtonProps {
   text: string;
   path: string;
   logo: React.ReactNode;
+  isBottomBar: boolean;
 }
 
-const NavbarButton: React.FC<NavbarButtonProps> = ({ text, path, logo }) => {
+const NavbarButton: React.FC<NavbarButtonProps> = ({
+  text,
+  path,
+  logo,
+  isBottomBar,
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState(pathname);
@@ -23,7 +29,7 @@ const NavbarButton: React.FC<NavbarButtonProps> = ({ text, path, logo }) => {
     <div
       className={`container flex hover:bg-activeBtn hover:rounded-lg my-2 pl-3 pr-6 py-1 ${
         currentPath === path ? "bg-activeBtn rounded-lg" : ""
-      }`}
+      } ${isBottomBar ? "h-full" : ""}`}
     >
       {logo}
       <Link href={path} className="pl-2">
