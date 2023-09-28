@@ -63,12 +63,6 @@ const Navbar: React.FC<NavbarProps> = ({ isDashboard = false }) => {
             )
           ) : (
             <Link href="https://forms.gle/QC5tYibMiUR5RTuR7" className="p-4">
-              Support
-            </Link>
-          )}
-
-          {!isDashboard ? null : (
-            <Link href="\dashboard" className="p-4">
               Feedback
             </Link>
           )}

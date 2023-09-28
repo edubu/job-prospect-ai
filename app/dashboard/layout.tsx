@@ -11,7 +11,7 @@ export default function DashboardLayout({
     <>
       <Navbar isDashboard={true} />
 
-      <div className="container flex overflow-x-auto mb-10">
+      <div className="container flex mb-10">
         <DashboardNavbar />
         {children}
       </div>

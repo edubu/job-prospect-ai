@@ -12,7 +12,7 @@ export const DashboardNavbar: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768); // Adjust the breakpoint as needed
+      setIsSmallScreen(window.innerWidth < 821); // Adjust the breakpoint as needed
     };
 
     // Listen for window resize events
@@ -27,15 +27,16 @@ export const DashboardNavbar: React.FC = () => {
 
   return (
     <div
-      className={`lg:ml-40 md:ml-10 ${
+      className={`lg:ml-20 md:ml-10 ${
         isSmallScreen
-          ? "fixed bottom-0 w-full bg-subBackground w-full ml-0 px-4 border-t-2 border-subHeader"
+          ? "fixed bottom-0 left-0 z-50 h-50 w-full bg-subBackground ml-0 px-4 border-t-2 border-subHeader"
           : "h-screen w-1/7 pt-6"
       }`}
     >
       <ul className={`${isSmallScreen ? "flex" : ""}`}>
         <li className={`${isSmallScreen ? "block" : ""}`}>
           <NavbarButton
+            isBottomBar={isSmallScreen}
             text="Documents"
             path="/dashboard"
             logo={<IoDocumentTextOutline size="1.5em" />}
@@ -43,6 +44,7 @@ export const DashboardNavbar: React.FC = () => {
         </li>
         <li className={`${isSmallScreen ? "block" : ""}`}>
           <NavbarButton
+            isBottomBar={isSmallScreen}
             text="Create"
             path="/dashboard/create"
             logo={<VscTools size="1.5em" />}
