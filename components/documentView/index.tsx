@@ -12,6 +12,10 @@ interface DocumentViewProps {
   documentId: string | null;
 }
 
+const downloadDocument = async (documentId: string | null) => {
+  console.log("Downloading document...");
+};
+
 const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
   const supabase = createClientComponentClient();
   const [markdownContent, setMarkdownContent] = useState("");
@@ -80,6 +84,12 @@ const DocumentView: React.FC<DocumentViewProps> = ({ documentId }) => {
   return (
     <div className={`${styles["markdown-container"]} bg-subBackground`}>
       {/* <ReactMarkdown children={markdownContent} /> */}
+      <button
+        className="bg-ctaBtn rounded-lg px-3 font-semiBold"
+        onClick={() => downloadDocument(documentId)}
+      >
+        Download Document
+      </button>
       <ReactMarkdown>{markdownContent}</ReactMarkdown>
     </div>
   );
