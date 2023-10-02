@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-    process.env.SUPABASE_SERVICE_ROLE_KEY as string
+    process.env.SUPABASE_SERVER_ROLE_KEY as string
   );
 
   const {
