@@ -44,9 +44,13 @@ const Index: React.FC = () => {
           </div>
 
           {/* Spots remaining */}
-          <div className="text-center p-3 text-xs md:text-sm">
-            <p className="text-red">{`${10 - userCount} spots remaining`}</p>
-          </div>
+          {userCount ? (
+            <div className="text-center p-3 text-xs md:text-sm">
+              <p className="text-red">
+                {userCount ? `${10 - userCount} spots remaining` : ""}
+              </p>
+            </div>
+          ) : null}
 
           {/* CTA Button */}
           {userCount >= 10 ? (
