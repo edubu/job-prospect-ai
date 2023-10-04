@@ -18,18 +18,21 @@ export async function POST(req: Request) {
   const documentName = requestBody.documentName;
   console.log("[INFO] Company Summary requested for", companyURL.origin);
 
-  // create supabase client
-  const supabase = createRouteHandlerClient({ cookies });
+  const companySummary: ICompanySummaryResponse = await createCompanySummary({
+    companyURL,
+  });
+  // // create supabase client
+  // const supabase = createRouteHandlerClient({ cookies });
 
-  // Call the company summarizer
-  const options = {
-    replaceDocument: true,
-  };
+  // // Call the company summarizer
+  // const options = {
+  //   replaceDocument: true,
+  // };
 
-  const createCompanySummaryResponse: ICompanySummaryResponse =
-    await createCompanySummary({ companyURL, documentName, supabase, options });
+  // const createCompanySummaryResponse: ICompanySummaryResponse =
+  //   await createCompanySummary({ companyURL, documentName, supabase, options });
 
-  console.log("[INFO]", createCompanySummaryResponse.message);
+  // console.log("[INFO]", createCompanySummaryResponse.message);
 
   return NextResponse.json({
     redirectTo: requestUrl.origin + "/dashboard",
