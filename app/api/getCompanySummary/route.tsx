@@ -18,9 +18,23 @@ export async function POST(req: Request) {
   const documentName = requestBody.documentName;
   console.log("[INFO] Company Summary requested for", companyURL.origin);
 
-  const companySummary: ICompanySummaryResponse = await createCompanySummary({
-    companyURL,
-  });
+  // Call the FastAPI company summary generation endpoint
+  const generatorResponse = await fetch(
+    `${process.env.FASTAPI_URL as string}/generateCompanySummary`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+      },
+      body: JSON.stringify({ company_url: companyURL.origin }),
+    }
+  );
+
+  const generatorResponseData = await generatorResponse.json();
+
+  console.log(generatorResponseData);
+
   // // create supabase client
   // const supabase = createRouteHandlerClient({ cookies });
 

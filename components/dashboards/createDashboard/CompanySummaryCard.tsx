@@ -49,7 +49,7 @@ const CompanySummaryCard: React.FC = () => {
     setIsGenerating(true);
     // generate company summary
     try {
-      const generateResponse = await fetch("/api/generateCompanySummary", {
+      const generateResponse = await fetch("/api/getCompanySummary", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,14 +58,12 @@ const CompanySummaryCard: React.FC = () => {
         body: JSON.stringify({ url: companyURL, documentName: documentName }),
       });
 
-      const generateData = await generateResponse.json();
+      const generateResponseData = await generateResponse.json();
 
       // redirect to document view
-      if (generateData.redirectTo) {
-        router.push(generateData.redirectTo);
+      if (generateResponseData.redirectTo) {
+        router.push(generateResponseData.redirectTo);
       }
-
-      // console.log(generateData);
     } catch (error) {
       console.log("There was an error generating the company summary:", error);
       setIsGenerating(false);
