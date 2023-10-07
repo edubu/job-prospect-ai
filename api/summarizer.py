@@ -8,6 +8,9 @@ from models.summarizeModel import PageSummary, summarize_chain
 from scraper.scraper_bs4 import ScraperBS4
 from scraper.scraper_types import PageContent
 
+
+import asyncio
+
 """
     Generates the company summary in markdown:
     
@@ -69,7 +72,19 @@ async def generateCompanySummary(company_url: str):
 
 
 async def summarizePages(pages: List[PageContent]):
-    pass
+    # ------------ PAGE SUMMARIES --------------
+    # Summarize all pages in 2-3 paragraphs - PageSummaryModel
+    # Include which sections this page will be useful for
+    tasks = [summarize_chain.arun(
+        page_url=page.url, page_text=page.text) for page in pages]
+    pageSummaries: List[PageSummary] = await asyncio.gather(*tasks)
+
+    for page, pageSUm
+
+
+async def summarizePage(page: PageContent) -> PageContent:
+    pageSummary: PageSummary = summarize_chain.arun(
+        page_url=page.url, page_text=page.text)
 
 
 async def getPrioritizedLinks(url: str, links: List[str], num_links=10):
