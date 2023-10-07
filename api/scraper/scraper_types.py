@@ -8,17 +8,15 @@ class PageContent:
     def __init__(self) -> None:
         self.summary = None
         self.sections = []
+        self.url = None
+        self.status = None
+        self.bodyContent = None
 
-    async def setResponse(self, response: ClientResponse):
-        self.url = response.url
-        self.status = response.status
-        self.bodyContent = await response.text()
 
-    async def setSummary(self, summary: str):
-        self.summary = summary
-
-    async def setSections(self, sections: List[str]):
-        self.sections = sections
+class HeaderContent:
+    def __init__(self) -> None:
+        self.url = None
+        self.status = None
 
 
 class ScraperBaseClass(ABC):

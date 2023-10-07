@@ -25,96 +25,96 @@ export const getPageInternalLinks = async (
   return links;
 };
 
-// export const getPageLinks = async (url: URL): Promise<string[]> => {
-//   const pageData = await fetchPage(url.origin);
-//   if (!pageData) {
-//     throw new Error(`Unable to fetch page content for ${url}`);
-//   }
+export const getPageLinks = async (url: URL): Promise<string[]> => {
+  const pageData = await fetchPage(url.origin);
+  if (!pageData) {
+    throw new Error(`Unable to fetch page content for ${url}`);
+  }
 
-//   // Create cheerio object to parse HTML
-//   const $ = cheerioLoad(pageData);
+  // Create cheerio object to parse HTML
+  const $ = cheerioLoad(pageData);
 
-//   return await parseInternalLinks($, url.origin);
-// };
+  return await parseInternalLinks($, url.origin);
+};
 
-// const parseInternalLinks = async (
-//   $: CheerioAPI,
-//   baseURL: string
-// ): Promise<string[]> => {
-//   const anchorElements = $("a[href]");
+const parseInternalLinks = async (
+  $: CheerioAPI,
+  baseURL: string
+): Promise<string[]> => {
+  const anchorElements = $("a[href]");
 
-//   const internalLinks = anchorElements.filter((_, element): boolean => {
-//     const href = $(element).attr("href");
-//     return (href?.startsWith(baseURL) || href?.startsWith("/")) == true;
-//   });
+  const internalLinks = anchorElements.filter((_, element): boolean => {
+    const href = $(element).attr("href");
+    return (href?.startsWith(baseURL) || href?.startsWith("/")) == true;
+  });
 
-//   return internalLinks
-//     .map((_, element): string => {
-//       const href = $(element).attr("href");
-//       if (href?.startsWith(baseURL)) {
-//         return href;
-//       } else if (href?.startsWith("/")) {
-//         return `${baseURL}${href}`;
-//       } else {
-//         throw new Error(`Unable to parse internal link ${href}`);
-//       }
-//     })
-//     .get();
-// };
+  return internalLinks
+    .map((_, element): string => {
+      const href = $(element).attr("href");
+      if (href?.startsWith(baseURL)) {
+        return href;
+      } else if (href?.startsWith("/")) {
+        return `${baseURL}${href}`;
+      } else {
+        throw new Error(`Unable to parse internal link ${href}`);
+      }
+    })
+    .get();
+};
 
-// const parseBodyText = async ($: CheerioAPI): Promise<string> => {
-//   const pElements = $("p");
-//   const pText = pElements
-//     .map((_, element): string => {
-//       return $(element).text();
-//     })
-//     .get()
-//     .join(" ")
-//     .trim();
+const parseBodyText = async ($: CheerioAPI): Promise<string> => {
+  const pElements = $("p");
+  const pText = pElements
+    .map((_, element): string => {
+      return $(element).text();
+    })
+    .get()
+    .join(" ")
+    .trim();
 
-//   const hElements = $("h1, h2, h3, h4, h5, h6");
-//   const hText = hElements
-//     .map((_, element): string => {
-//       return $(element).text();
-//     })
-//     .get()
-//     .join(" ")
-//     .trim();
+  const hElements = $("h1, h2, h3, h4, h5, h6");
+  const hText = hElements
+    .map((_, element): string => {
+      return $(element).text();
+    })
+    .get()
+    .join(" ")
+    .trim();
 
-//   return `Headers: ${hText} Paragraphs: ${pText}`;
-// };
+  return `Headers: ${hText} Paragraphs: ${pText}`;
+};
 
-// const fetchPage = async (url: string): Promise<string | undefined> => {
-//   try {
-//     const res: AxiosResponse = await axios.get(url);
+const fetchPage = async (url: string): Promise<string | undefined> => {
+  try {
+    const res: AxiosResponse = await axios.get(url);
 
-//     return res.data;
-//   } catch (error) {
-//     if (axios.isAxiosError(error)) {
-//       console.error(`There was an error fetching ${url}: ${error.message}`);
-//     } else {
-//       console.error(`An unknown error occurred while fetching ${url}`);
-//     }
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(`There was an error fetching ${url}: ${error.message}`);
+    } else {
+      console.error(`An unknown error occurred while fetching ${url}`);
+    }
 
-//     return undefined; // Return undefined when an error occurs
-//   }
-// };
+    return undefined; // Return undefined when an error occurs
+  }
+};
 
-// export const getPageContent = async (url: string): Promise<PageContent> => {
-//   const pageData = await fetchPage(url);
-//   if (!pageData) {
-//     throw new Error(`Unable to fetch page content for ${url}`);
-//   }
+export const getPageContent = async (url: string): Promise<PageContent> => {
+  const pageData = await fetchPage(url);
+  if (!pageData) {
+    throw new Error(`Unable to fetch page content for ${url}`);
+  }
 
-//   // Create cheerio object to parse HTML
-//   const $ = cheerioLoad(pageData);
+  // Create cheerio object to parse HTML
+  const $ = cheerioLoad(pageData);
 
-//   const pageContent: PageContent = {
-//     url,
-//     bodyText: await parseBodyText($),
-//     title: $("title").text().trim(),
-//     links: await parseInternalLinks($, url),
-//   };
+  const pageContent: PageContent = {
+    url,
+    bodyText: await parseBodyText($),
+    title: $("title").text().trim(),
+    links: await parseInternalLinks($, url),
+  };
 
-//   return pageContent;
-// };
+  return pageContent;
+};
