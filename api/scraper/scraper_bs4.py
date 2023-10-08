@@ -1,3 +1,4 @@
+from scraper.scraper_types import HeaderContent, PageContent, ScraperBaseClass
 import asyncio
 from typing import Dict, List
 
@@ -5,16 +6,20 @@ import aiohttp
 import tiktoken
 from bs4 import BeautifulSoup
 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 ENCODING_NAME = "c100k_base"
 
 # from scraper_types import PageContent, ScraperBaseClass
-from scraper.scraper_types import HeaderContent, PageContent, ScraperBaseClass
 
 
 class ScraperBS4(ScraperBaseClass):
     def __init__(self) -> None:
         super().__init__()
-        self.session = aiohttp.ClientSession()
+        # self.session = aiohttp.ClientSession()
 
     async def scrape(self, urls: List[str], token_limit=10000) -> List[PageContent]:
         tasks = [self.fetch_page(url) for url in urls]
@@ -72,7 +77,8 @@ class ScraperBS4(ScraperBaseClass):
     async def cleanPage(self, page: PageContent, token_limit: int) -> PageContent:
         soup = BeautifulSoup(page.bodyContent, "html.parser")
 
-        allowed_tags = ["p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li"]
+        allowed_tags = ["p", "h1", "h2", "h3",
+                        "h4", "h5", "h6", "ul", "ol", "li"]
 
     def numTokensFromString(string: str, encoding_name: str = ENCODING_NAME) -> int:
         encoding = tiktoken.get_encoding(encoding_name)
@@ -95,12 +101,48 @@ class ScraperBS4(ScraperBaseClass):
             return header
 
     async def fetch_page(self, url: str) -> PageContent:
-        async with self.session.get(url) as response:
+        driver = webdriver.Chrome()
+        try:
+            driver.get(url)
+
+            # Define a list of element locators (e.g., TAG_NAME, CSS_SELECTOR, XPATH)
+            element_locators = [By.TAG_NAME('p'), By.TAG_NAME(
+                'h1'), By.TAG_NAME('h2'), By.TAG_NAME('h3')]
+
+            # Wait for each element type to load
+            wait_timeout = 10  # Adjust the timeout as needed
+            for locator in element_locators:
+                WebDriverWait(driver, wait_timeout).until(
+                    EC.presence_of_element_located(locator))
+
+            # Find all 'h1', 'h2', 'h3', and 'p' elements
+            elements_h1 = driver.find_elements_by_tag_name('h1')
+            elements_h2 = driver.find_elements_by_tag_name('h2')
+            elements_h3 = driver.find_elements_by_tag_name('h3')
+            elements_p = driver.find_elements_by_tag_name('p')
+
+            # Extract text from all matching elements
+            h1_text = [element.text for element in elements_h1]
+            h2_text = [element.text for element in elements_h2]
+            h3_text = [element.text for element in elements_h3]
+            p_text = [element.text for element in elements_p]
+
+            h1s = "\n".join(h1_text)
+            h2s = "\n".join(h2_text)
+            h3s = "\n".join(h3_text)
+            ps = "\n".join(p_text)
+
+            page_text = f"{h1s}\n{h2s}\n{h3s}\n{ps}"
+
+            # Construct PageContent object
             page = PageContent()
-            page.url = response.url.__str__()
-            page.status = response.status
-            page.bodyContent = await response.text()
+            page.title = driver.title
+            page.bodyContent = page_text
+            page.url = driver.current_url
+
             return page
+        finally:
+            driver.quit()
 
     async def splitUrl(self, url: str) -> str:
         hostname = None
@@ -116,7 +158,3 @@ class ScraperBS4(ScraperBaseClass):
             hostname = splits[1]
 
         return protocol, hostname
-
-    async def close_session(self):
-        if self.session:
-            await self.session.close()

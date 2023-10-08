@@ -6,7 +6,7 @@ from models.linkModel import link_chain
 from models.summarizeModel import PageSummary, summarize_chain
 
 # Scraper deps
-from scraper.scraper_bs4 import ScraperBS4
+from api.scraper.scraper_bs4 import ScraperBS4
 from scraper.scraper_types import PageContent
 
 """

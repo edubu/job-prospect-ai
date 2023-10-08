@@ -9,8 +9,8 @@ class PageContent:
         self.summary = None
         self.sections = []
         self.url = None
-        self.status = None
         self.bodyContent = None
+        self.title = None
 
 
 class HeaderContent:

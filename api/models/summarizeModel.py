@@ -51,7 +51,7 @@ Choose from the following sections:
 """
 
 # Prompts
-system_prompt_template = SystemMessagePromptTemplate.from_template(
+system_prompt_template = imSystemMessagePromptTemplate.from_template(
     SUMMARIZE_SYSTEM_TEMPLATE)
 human_prompt_template_original = PromptTemplate(template=SUMMARIZE_HUMAN_TEMPLATE,
                                                 input_variables=[
